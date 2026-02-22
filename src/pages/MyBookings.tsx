@@ -70,7 +70,7 @@ const MyBookings: React.FC = () => {
                   <div className="flex items-center gap-3">
                     <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${
                       booking.status === "approved" ? "bg-emerald-100 text-emerald-700" :
-                      booking.status === "pending" ? "bg-amber-100 text-amber-700" :
+                      booking.status.startsWith("waiting") ? "bg-amber-100 text-amber-700" :
                       booking.status === "correction_allowed" ? (isExpired ? "bg-zinc-100 text-zinc-500" : "bg-blue-100 text-blue-700") :
                       "bg-red-100 text-red-700"
                     }`}>

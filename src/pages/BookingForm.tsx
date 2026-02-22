@@ -11,13 +11,11 @@ import {
   serverTimestamp,
   updateDoc
 } from "firebase/firestore";
-import { ref, uploadString, getDownloadURL } from "firebase/storage";
-import { db, storage } from "../lib/firebase";
+import { db } from "../lib/firebase";
 import { useAuth } from "../contexts/AuthContext";
 import { Resource, Booking } from "../types";
 import { motion } from "motion/react";
 import { Calendar, Clock, Users, FileText, Send, AlertCircle, Check, ArrowLeft } from "lucide-react";
-import SignaturePad from "../components/SignaturePad";
 import { cn } from "../lib/utils";
 
 const BookingForm: React.FC = () => {
@@ -65,13 +63,12 @@ const BookingForm: React.FC = () => {
     const booking = dayBookings.find(b => timeStr >= b.startTime && timeStr < b.endTime);
     if (!booking) return "bg-emerald-500";
     if (booking.status === "approved") return "bg-red-500";
-    if (booking.status === "pending") return "bg-amber-400";
+    if (booking.status.startsWith("waiting")) return "bg-amber-400";
     if (booking.status === "correction_allowed") return "bg-orange-500";
     return "bg-emerald-500";
   };
 
   const hours = Array.from({ length: 13 }, (_, i) => i + 8); // 8 AM to 8 PM
-  const [signature, setSignature] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -152,14 +149,13 @@ const BookingForm: React.FC = () => {
     const q = query(
       bookingsRef,
       where("resourceId", "==", resId),
-      where("date", "==", formData.date),
-      where("status", "in", ["approved", "pending"])
+      where("date", "==", formData.date)
     );
 
     const querySnapshot = await getDocs(q);
     const existingBookings = querySnapshot.docs
       .map(doc => ({ id: doc.id, ...doc.data() } as Booking))
-      .filter(b => b.id !== bookingId);
+      .filter(b => b.id !== bookingId && !["rejected", "correction_allowed"].includes(b.status));
 
     const newStart = formData.startTime;
     const newEnd = formData.endTime;
@@ -176,7 +172,6 @@ const BookingForm: React.FC = () => {
 
     try {
       if (!user || !resource) throw new Error("Missing user or resource");
-      if (!signature && !bookingId) throw new Error("Please provide your digital signature.");
 
       if (parseInt(formData.participants) > resource.capacity) {
         throw new Error(`Participants exceed capacity of ${resource.capacity}`);
@@ -187,13 +182,10 @@ const BookingForm: React.FC = () => {
         throw new Error("This resource is already booked for the selected time slot.");
       }
 
-      let signatureUrl = existingBooking?.organizerSignatureUrl || "";
-      
-      if (signature) {
-        const storageRef = ref(storage, `signatures/${user.uid}_${Date.now()}.png`);
-        await uploadString(storageRef, signature, "data_url");
-        signatureUrl = await getDownloadURL(storageRef);
-      }
+      // Determine initial status
+      // If department hall -> waiting_hod
+      // Else -> waiting_staff
+      const initialStatus = resource.type === "Hall" ? "waiting_hod" : "waiting_staff";
 
       const bookingData: any = {
         eventName: formData.eventName,
@@ -206,11 +198,16 @@ const BookingForm: React.FC = () => {
         participants: parseInt(formData.participants),
         equipment: formData.equipment,
         purpose: formData.purpose,
-        status: "pending",
-        organizerSignatureUrl: signatureUrl,
+        status: initialStatus,
+        
+        // Approval Metadata
+        hodApproved: false,
+        staffApproved: false,
+        principalApproved: false,
       };
 
       if (bookingId) {
+        // Reset status on update if it was correction_allowed
         await updateDoc(doc(db, "bookings", bookingId), bookingData);
       } else {
         bookingData.userId = user.uid;
@@ -421,16 +418,19 @@ const BookingForm: React.FC = () => {
           </div>
 
           <div className="pt-4">
-            <SignaturePad 
-              label="Digital Signature" 
-              onSave={(data) => setSignature(data)} 
-              onClear={() => setSignature(null)}
-            />
-            {signature && (
-              <p className="text-xs text-emerald-600 font-medium mt-1 flex items-center gap-1">
-                <Check className="w-3 h-3" /> Signature captured successfully
-              </p>
-            )}
+            <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-6">
+              <div className="flex items-start gap-3">
+                <div className="w-5 h-5 bg-zinc-900 rounded flex items-center justify-center shrink-0 mt-0.5">
+                  <Check className="w-3 h-3 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-zinc-900">Digital Approval</p>
+                  <p className="text-xs text-zinc-500 mt-1">
+                    By submitting this request, you agree that your verified email ({user.email}) will be used as a digital signature for this application.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="pt-4">

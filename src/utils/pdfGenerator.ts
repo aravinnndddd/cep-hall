@@ -54,35 +54,38 @@ Thanking you,`;
   doc.text("Yours faithfully,", margin, y);
   y += 10;
   
-  if (booking.organizerSignatureUrl) {
-    try {
-      doc.addImage(booking.organizerSignatureUrl, "PNG", margin, y, 40, 20);
-    } catch (e) {
-      console.error("Error adding organizer signature to PDF", e);
-    }
-  }
+  doc.setFontSize(10);
+  doc.text(`Digitally Signed by: ${booking.organizerName}`, margin, y);
+  doc.text(`Email: ${booking.userId}@college.edu`, margin, y + 5); // Fallback if no email in booking
   
-  y += 25;
+  y += 20;
+  doc.setFontSize(12);
   doc.text(`${booking.organizerName}`, margin, y);
   doc.text(`(Organizer, ${booking.department})`, margin, y + 7);
 
-  // Admin Approval Section
-  if (booking.status === "approved") {
-    y = 240;
-    doc.setFont("helvetica", "bold");
-    doc.text("OFFICE USE ONLY - APPROVED", margin, y);
-    y += 10;
-    if (booking.adminSignatureUrl) {
-      try {
-        doc.addImage(booking.adminSignatureUrl, "PNG", margin, y, 40, 20);
-      } catch (e) {
-        console.error("Error adding admin signature to PDF", e);
-      }
+  // Approval Section
+  y = 220;
+  doc.setFont("helvetica", "bold");
+  doc.text("APPROVAL STATUS", margin, y);
+  y += 10;
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+
+  const approvals = [
+    { label: "HOD Approval", approved: booking.hodApproved, email: booking.hodEmail, date: booking.hodApprovedAt },
+    { label: "Staff Approval", approved: booking.staffApproved, email: booking.staffEmail, date: booking.staffApprovedAt },
+    { label: "Principal Approval", approved: booking.principalApproved, email: booking.principalEmail, date: booking.principalApprovedAt },
+  ];
+
+  approvals.forEach((app) => {
+    const status = app.approved ? "APPROVED" : "PENDING";
+    const dateStr = app.date ? format(app.date.toDate(), "dd/MM/yyyy HH:mm") : "-";
+    doc.text(`${app.label}: ${status}`, margin, y);
+    if (app.approved) {
+      doc.text(`By: ${app.email} on ${dateStr}`, margin + 80, y);
     }
-    y += 25;
-    doc.setFont("helvetica", "normal");
-    doc.text("Authorized Signatory", margin, y);
-  }
+    y += 7;
+  });
 
   doc.save(`Request_Letter_${booking.eventName.replace(/\s+/g, "_")}.pdf`);
 };

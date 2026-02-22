@@ -1,6 +1,6 @@
 import { Timestamp } from "firebase/firestore";
 
-export type BookingStatus = "pending" | "approved" | "correction_allowed" | "rejected" | "expired";
+export type BookingStatus = "waiting_hod" | "waiting_staff" | "waiting_principal" | "approved" | "correction_allowed" | "rejected";
 
 export interface Resource {
   id: string;
@@ -31,7 +31,26 @@ export interface Booking {
   status: BookingStatus;
   rejectionReason?: string;
   correctionDeadline?: Timestamp;
-  organizerSignatureUrl?: string;
-  adminSignatureUrl?: string;
   createdAt: Timestamp;
+
+  // Approval Metadata
+  hodApproved: boolean;
+  hodEmail?: string;
+  hodApprovedAt?: Timestamp;
+  
+  staffApproved: boolean;
+  staffEmail?: string;
+  staffApprovedAt?: Timestamp;
+  
+  principalApproved: boolean;
+  principalEmail?: string;
+  principalApprovedAt?: Timestamp;
+}
+
+export interface Approver {
+  email: string;
+  role: "hod" | "staff" | "principal";
+  department?: string;
+  resourceId?: string;
+  isActive: boolean;
 }

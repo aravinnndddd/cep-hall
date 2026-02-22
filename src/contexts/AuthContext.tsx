@@ -7,8 +7,8 @@ import {
   User 
 } from "firebase/auth";
 import { auth, googleProvider, db } from "../lib/firebase";
-import { collection, getDocs, doc, setDoc } from "firebase/firestore";
-import { Resource } from "../types";
+import { collection, getDocs, doc, setDoc, getDoc } from "firebase/firestore";
+import { Resource, Approver } from "../types";
 
 interface AuthContextType {
   user: User | null;
@@ -17,6 +17,7 @@ interface AuthContextType {
   loginWithEmail: (email: string, pass: string) => Promise<void>;
   logout: () => Promise<void>;
   isAdmin: boolean;
+  approver: Approver | null;
   resources: Resource[];
   fetchResources: () => Promise<void>;
 }
@@ -27,7 +28,54 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [approver, setApprover] = useState<Approver | null>(null);
   const [resources, setResources] = useState<Resource[]>([]);
+
+  const fetchApproverData = async (email: string) => {
+    try {
+      const approverDoc = await getDoc(doc(db, "authorizedApprovers", email));
+      if (approverDoc.exists()) {
+        const data = approverDoc.data() as Approver;
+        if (data.isActive) {
+          setApprover(data);
+          setIsAdmin(true); // Approvers are considered admins in this context
+          return;
+        }
+      }
+      
+      // Fallback for hardcoded admin
+      if (email === "admin@college.edu") {
+        const adminApprover: Approver = {
+          email,
+          role: "principal",
+          isActive: true
+        };
+        setApprover(adminApprover);
+        setIsAdmin(true);
+      } else {
+        setApprover(null);
+        setIsAdmin(false);
+      }
+    } catch (error) {
+      console.error("Error fetching approver data:", error);
+    }
+  };
+
+  const seedApprovers = async () => {
+    const snapshot = await getDocs(collection(db, "authorizedApprovers"));
+    if (snapshot.empty) {
+      console.log("Seeding default approvers...");
+      const defaultApprovers: Approver[] = [
+        { email: "hod.cs@college.edu", role: "hod", department: "Computer Science", isActive: true },
+        { email: "staff.nos@college.edu", role: "staff", resourceId: "nos-lab", isActive: true },
+        { email: "principal@college.edu", role: "principal", isActive: true },
+        { email: "admin@college.edu", role: "principal", isActive: true },
+      ];
+      for (const app of defaultApprovers) {
+        await setDoc(doc(db, "authorizedApprovers", app.email), app);
+      }
+    }
+  };
 
   const fetchResources = async () => {
     try {
@@ -105,14 +153,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
-      setIsAdmin(user?.email === "admin@college.edu" || user?.email?.startsWith("admin."));
-      setLoading(false);
+      setLoading(true);
       
-      if (user) {
-        fetchResources();
+      if (user && user.email) {
+        await seedApprovers();
+        await fetchApproverData(user.email);
+        await fetchResources();
+      } else {
+        setApprover(null);
+        setIsAdmin(false);
       }
+      
+      setLoading(false);
     });
 
     return unsubscribe;
@@ -131,7 +185,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, loginWithEmail, logout, isAdmin, resources, fetchResources }}>
+    <AuthContext.Provider value={{ user, loading, login, loginWithEmail, logout, isAdmin, approver, resources, fetchResources }}>
       {children}
     </AuthContext.Provider>
   );
