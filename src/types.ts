@@ -6,7 +6,11 @@ export interface Resource {
   id: string;
   name: string;
   type: "Lab" | "Hall";
+  department: string;
   capacity: number;
+  description: string;
+  equipment: string;
+  imageUrl?: string;
 }
 
 export interface Booking {

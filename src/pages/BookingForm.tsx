@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { 
   collection, 
   addDoc, 
@@ -16,20 +16,22 @@ import { db, storage } from "../lib/firebase";
 import { useAuth } from "../contexts/AuthContext";
 import { Resource, Booking } from "../types";
 import { motion } from "motion/react";
-import { Calendar, Clock, Users, FileText, Send, AlertCircle, Check } from "lucide-react";
+import { Calendar, Clock, Users, FileText, Send, AlertCircle, Check, ArrowLeft } from "lucide-react";
 import SignaturePad from "../components/SignaturePad";
+import { cn } from "../lib/utils";
 
 const BookingForm: React.FC = () => {
   const { resourceId, bookingId } = useParams<{ resourceId?: string; bookingId?: string }>();
-  const { user } = useAuth();
+  const location = useLocation();
+  const { user, resources } = useAuth();
   const navigate = useNavigate();
   
-  const [resource, setResource] = useState<Resource | null>(null);
+  const [resource, setResource] = useState<Resource | null>(location.state?.resource || null);
   const [existingBooking, setExistingBooking] = useState<Booking | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!location.state?.resource);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [signature, setSignature] = useState<string | null>(null);
+  const [dayBookings, setDayBookings] = useState<Booking[]>([]);
 
   const [formData, setFormData] = useState({
     eventName: "",
@@ -45,10 +47,35 @@ const BookingForm: React.FC = () => {
   });
 
   useEffect(() => {
+    const fetchDayBookings = async () => {
+      if (!resource || !formData.date) return;
+      const q = query(
+        collection(db, "bookings"),
+        where("resourceId", "==", resource.id),
+        where("date", "==", formData.date)
+      );
+      const snap = await getDocs(q);
+      setDayBookings(snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Booking)));
+    };
+    fetchDayBookings();
+  }, [resource, formData.date]);
+
+  const getTimeStatus = (hour: number) => {
+    const timeStr = `${hour.toString().padStart(2, "0")}:00`;
+    const booking = dayBookings.find(b => timeStr >= b.startTime && timeStr < b.endTime);
+    if (!booking) return "bg-emerald-500";
+    if (booking.status === "approved") return "bg-red-500";
+    if (booking.status === "pending") return "bg-amber-400";
+    if (booking.status === "correction_allowed") return "bg-orange-500";
+    return "bg-emerald-500";
+  };
+
+  const hours = Array.from({ length: 13 }, (_, i) => i + 8); // 8 AM to 8 PM
+  const [signature, setSignature] = useState<string | null>(null);
+
+  useEffect(() => {
     const fetchData = async () => {
       try {
-        let currentResourceId = resourceId;
-
         if (bookingId) {
           const bookingDoc = await getDoc(doc(db, "bookings", bookingId));
           if (bookingDoc.exists()) {
@@ -65,7 +92,18 @@ const BookingForm: React.FC = () => {
             }
 
             setExistingBooking(bData);
-            currentResourceId = bData.resourceId;
+            
+            // Try to find resource in cache first
+            const cachedRes = resources.find(r => r.id === bData.resourceId);
+            if (cachedRes) {
+              setResource(cachedRes);
+            } else {
+              const resDoc = await getDoc(doc(db, "resources", bData.resourceId));
+              if (resDoc.exists()) {
+                setResource({ id: resDoc.id, ...resDoc.data() } as Resource);
+              }
+            }
+
             setFormData({
               eventName: bData.eventName,
               organizerName: bData.organizerName,
@@ -79,24 +117,17 @@ const BookingForm: React.FC = () => {
               purpose: bData.purpose,
             });
           }
-        }
-
-        if (currentResourceId) {
-          const docRef = doc(db, "resources", currentResourceId);
-          const docSnap = await getDoc(docRef);
-          
-          if (docSnap.exists()) {
-            setResource({ id: docSnap.id, ...docSnap.data() } as Resource);
-          } else if (currentResourceId.startsWith("seed-")) {
-            const defaults = [
-              { name: "NOS Lab", type: "Lab", capacity: 30 },
-              { name: "System Lab", type: "Lab", capacity: 40 },
-              { name: "ASAP Lab", type: "Lab", capacity: 25 },
-              { name: "CS Seminar Hall", type: "Hall", capacity: 100 },
-              { name: "Admin Block Seminar Hall", type: "Hall", capacity: 150 },
-            ];
-            const index = parseInt(currentResourceId.split("-")[1]);
-            setResource({ ...defaults[index], id: currentResourceId } as Resource);
+        } else if (resourceId && !resource) {
+          // Try cache first
+          const cachedRes = resources.find(r => r.id === resourceId);
+          if (cachedRes) {
+            setResource(cachedRes);
+          } else {
+            const docRef = doc(db, "resources", resourceId);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+              setResource({ id: docSnap.id, ...docSnap.data() } as Resource);
+            }
           }
         }
       } catch (err) {
@@ -107,7 +138,7 @@ const BookingForm: React.FC = () => {
     };
 
     fetchData();
-  }, [resourceId, bookingId, user]);
+  }, [resourceId, bookingId, user, resources, resource]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -221,6 +252,39 @@ const BookingForm: React.FC = () => {
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="md:col-span-2 space-y-4">
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-semibold text-zinc-700">Availability for {formData.date || "selected date"}</label>
+                <div className="flex gap-4 text-[10px] font-bold uppercase tracking-wider">
+                  <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-emerald-500" /> Available</div>
+                  <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-amber-400" /> Requested</div>
+                  <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-orange-500" /> Correction</div>
+                  <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-red-500" /> Booked</div>
+                </div>
+              </div>
+              <div 
+                className="grid gap-1 h-8"
+                style={{ gridTemplateColumns: "repeat(13, minmax(0, 1fr))" }}
+              >
+                {hours.map(h => (
+                  <div 
+                    key={h} 
+                    className={cn("rounded-md transition-colors relative group", getTimeStatus(h))}
+                  >
+                    <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[8px] text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                      {h}:00
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="flex justify-between text-[8px] text-zinc-400 font-bold px-1 pt-1">
+                <span>08:00</span>
+                <span>12:00</span>
+                <span>16:00</span>
+                <span>20:00</span>
+              </div>
+            </div>
+
             <div className="space-y-2">
               <label className="text-sm font-semibold text-zinc-700 flex items-center gap-2">
                 <FileText className="w-4 h-4" /> Event Name
