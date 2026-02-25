@@ -56,10 +56,7 @@ const Dashboard: React.FC = () => {
   const { resources } = useAuth();
 
   // Use Firestore resources if available, otherwise use defaults
-  const displayResources =
-    resources.length > 0
-      ? [...DEFAULT_RESOURCES, ...resources]
-      : DEFAULT_RESOURCES;
+  const displayResources = resources.length > 0 ? resources : DEFAULT_RESOURCES;
 
   const labs = displayResources.filter((r) => r.type === "Lab");
   const halls = displayResources.filter((r) => r.type === "Hall");
