@@ -37,6 +37,13 @@ const Navbar: React.FC = () => {
                 <Calendar className="w-4 h-4" />
                 Calendar
               </Link>
+              <Link
+                to="/my-bookings"
+                className="text-zinc-600 hover:text-zinc-900 px-1 pt-1 text-sm font-medium flex items-center gap-1"
+              >
+                <Calendar className="w-4 h-4" />
+                My Bookings
+              </Link>
               {isAdmin && (
                 <Link
                   to="/admin"
