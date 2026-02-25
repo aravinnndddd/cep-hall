@@ -1,36 +1,58 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { 
-  collection, 
-  addDoc, 
-  getDoc, 
-  doc, 
-  query, 
-  where, 
-  getDocs, 
+import {
+  collection,
+  addDoc,
+  getDoc,
+  doc,
+  query,
+  where,
+  getDocs,
   serverTimestamp,
-  updateDoc
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "../lib/firebase";
 import { useAuth } from "../contexts/AuthContext";
 import { Resource, Booking } from "../types";
 import { motion } from "motion/react";
-import { Calendar, Clock, Users, FileText, Send, AlertCircle, Check, ArrowLeft } from "lucide-react";
+import {
+  Calendar,
+  Clock,
+  Users,
+  FileText,
+  Send,
+  AlertCircle,
+  Check,
+  ArrowLeft,
+} from "lucide-react";
 import { cn } from "../lib/utils";
 
 const BookingForm: React.FC = () => {
-  const { resourceId, bookingId } = useParams<{ resourceId?: string; bookingId?: string }>();
+  const { resourceId, bookingId } = useParams<{
+    resourceId?: string;
+    bookingId?: string;
+  }>();
   const location = useLocation();
   const { user, resources } = useAuth();
   const navigate = useNavigate();
-  
-  const [resource, setResource] = useState<Resource | null>(location.state?.resource || null);
+
+  const [resource, setResource] = useState<Resource | null>(
+    location.state?.resource || null,
+  );
   const [existingBooking, setExistingBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(!location.state?.resource);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [dayBookings, setDayBookings] = useState<Booking[]>([]);
+  const departments = [
+    "Computer Science",
+    "Electrical",
+    "Electronics",
+    "Mechanical",
 
+    "Administration",
+    "Skill Development",
+  ];
   const [formData, setFormData] = useState({
     eventName: "",
     organizerName: user?.displayName || "",
@@ -50,17 +72,21 @@ const BookingForm: React.FC = () => {
       const q = query(
         collection(db, "bookings"),
         where("resourceId", "==", resource.id),
-        where("date", "==", formData.date)
+        where("date", "==", formData.date),
       );
       const snap = await getDocs(q);
-      setDayBookings(snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Booking)));
+      setDayBookings(
+        snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as Booking),
+      );
     };
     fetchDayBookings();
   }, [resource, formData.date]);
 
   const getTimeStatus = (hour: number) => {
     const timeStr = `${hour.toString().padStart(2, "0")}:00`;
-    const booking = dayBookings.find(b => timeStr >= b.startTime && timeStr < b.endTime);
+    const booking = dayBookings.find(
+      (b) => timeStr >= b.startTime && timeStr < b.endTime,
+    );
     if (!booking) return "bg-emerald-500";
     if (booking.status === "approved") return "bg-red-500";
     if (booking.status.startsWith("waiting")) return "bg-amber-400";
@@ -76,26 +102,38 @@ const BookingForm: React.FC = () => {
         if (bookingId) {
           const bookingDoc = await getDoc(doc(db, "bookings", bookingId));
           if (bookingDoc.exists()) {
-            const bData = { id: bookingDoc.id, ...bookingDoc.data() } as Booking;
-            
-            const isExpired = bData.status === "correction_allowed" && 
-                             bData.correctionDeadline && 
-                             bData.correctionDeadline.toDate() < new Date();
-            
-            if (bData.userId !== user?.uid || bData.status !== "correction_allowed" || isExpired) {
-              setError("You are not authorized to edit this booking or the deadline has passed.");
+            const bData = {
+              id: bookingDoc.id,
+              ...bookingDoc.data(),
+            } as Booking;
+
+            const isExpired =
+              bData.status === "correction_allowed" &&
+              bData.correctionDeadline &&
+              bData.correctionDeadline.toDate() < new Date();
+
+            if (
+              bData.userId !== user?.uid ||
+              bData.status !== "correction_allowed" ||
+              isExpired
+            ) {
+              setError(
+                "You are not authorized to edit this booking or the deadline has passed.",
+              );
               setLoading(false);
               return;
             }
 
             setExistingBooking(bData);
-            
+
             // Try to find resource in cache first
-            const cachedRes = resources.find(r => r.id === bData.resourceId);
+            const cachedRes = resources.find((r) => r.id === bData.resourceId);
             if (cachedRes) {
               setResource(cachedRes);
             } else {
-              const resDoc = await getDoc(doc(db, "resources", bData.resourceId));
+              const resDoc = await getDoc(
+                doc(db, "resources", bData.resourceId),
+              );
               if (resDoc.exists()) {
                 setResource({ id: resDoc.id, ...resDoc.data() } as Resource);
               }
@@ -116,7 +154,7 @@ const BookingForm: React.FC = () => {
           }
         } else if (resourceId && !resource) {
           // Try cache first
-          const cachedRes = resources.find(r => r.id === resourceId);
+          const cachedRes = resources.find((r) => r.id === resourceId);
           if (cachedRes) {
             setResource(cachedRes);
           } else {
@@ -137,31 +175,37 @@ const BookingForm: React.FC = () => {
     fetchData();
   }, [resourceId, bookingId, user, resources, resource]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
-
   const checkAvailability = async () => {
     const resId = resource?.id;
     if (!resId) return false;
-    
+
     const bookingsRef = collection(db, "bookings");
     const q = query(
       bookingsRef,
       where("resourceId", "==", resId),
-      where("date", "==", formData.date)
+      where("date", "==", formData.date),
     );
 
     const querySnapshot = await getDocs(q);
     const existingBookings = querySnapshot.docs
-      .map(doc => ({ id: doc.id, ...doc.data() } as Booking))
-      .filter(b => b.id !== bookingId && !["rejected", "correction_allowed"].includes(b.status));
+      .map((doc) => ({ id: doc.id, ...doc.data() }) as Booking)
+      .filter(
+        (b) =>
+          b.id !== bookingId &&
+          !["rejected", "correction_allowed"].includes(b.status),
+      );
 
     const newStart = formData.startTime;
     const newEnd = formData.endTime;
 
-    return !existingBookings.some(booking => {
-      return (newStart < booking.endTime && newEnd > booking.startTime);
+    return !existingBookings.some((booking) => {
+      return newStart < booking.endTime && newEnd > booking.startTime;
     });
   };
 
@@ -179,13 +223,16 @@ const BookingForm: React.FC = () => {
 
       const isAvailable = await checkAvailability();
       if (!isAvailable) {
-        throw new Error("This resource is already booked for the selected time slot.");
+        throw new Error(
+          "This resource is already booked for the selected time slot.",
+        );
       }
 
       // Determine initial status
       // If department hall -> waiting_hod
       // Else -> waiting_staff
-      const initialStatus = resource.type === "Hall" ? "waiting_hod" : "waiting_staff";
+      const initialStatus =
+        resource.type === "Hall" ? "waiting_hod" : "waiting_staff";
 
       const bookingData: any = {
         eventName: formData.eventName,
@@ -199,7 +246,7 @@ const BookingForm: React.FC = () => {
         equipment: formData.equipment,
         purpose: formData.purpose,
         status: initialStatus,
-        
+
         // Approval Metadata
         hodApproved: false,
         staffApproved: false,
@@ -216,7 +263,7 @@ const BookingForm: React.FC = () => {
         bookingData.createdAt = serverTimestamp();
         await addDoc(collection(db, "bookings"), bookingData);
       }
-      
+
       navigate("/my-bookings");
     } catch (err: any) {
       setError(err.message);
@@ -226,7 +273,8 @@ const BookingForm: React.FC = () => {
   };
 
   if (loading) return <div className="text-center py-12">Loading...</div>;
-  if (!resource) return <div className="text-center py-12">Resource not found.</div>;
+  if (!resource)
+    return <div className="text-center py-12">Resource not found.</div>;
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -236,8 +284,12 @@ const BookingForm: React.FC = () => {
         className="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden"
       >
         <div className="bg-zinc-900 p-6 text-white">
-          <h2 className="text-2xl font-bold">{bookingId ? "Edit Request" : `Book ${resource.name}`}</h2>
-          <p className="text-zinc-400 mt-1">Fill in the details for your event request.</p>
+          <h2 className="text-2xl font-bold">
+            {bookingId ? "Edit Request" : `Book ${resource.name}`}
+          </h2>
+          <p className="text-zinc-400 mt-1">
+            Fill in the details for your event request.
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="p-8 space-y-6">
@@ -251,22 +303,38 @@ const BookingForm: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2 space-y-4">
               <div className="flex items-center justify-between">
-                <label className="text-sm font-semibold text-zinc-700">Availability for {formData.date || "selected date"}</label>
+                <label className="text-sm font-semibold text-zinc-700">
+                  Availability for {formData.date || "selected date"}
+                </label>
                 <div className="flex gap-4 text-[10px] font-bold uppercase tracking-wider">
-                  <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-emerald-500" /> Available</div>
-                  <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-amber-400" /> Requested</div>
-                  <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-orange-500" /> Correction</div>
-                  <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-red-500" /> Booked</div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-2 h-2 rounded-full bg-emerald-500" />{" "}
+                    Available
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-2 h-2 rounded-full bg-amber-400" />{" "}
+                    Requested
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-2 h-2 rounded-full bg-orange-500" />{" "}
+                    Correction
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-2 h-2 rounded-full bg-red-500" /> Booked
+                  </div>
                 </div>
               </div>
-              <div 
+              <div
                 className="grid gap-1 h-8"
                 style={{ gridTemplateColumns: "repeat(13, minmax(0, 1fr))" }}
               >
-                {hours.map(h => (
-                  <div 
-                    key={h} 
-                    className={cn("rounded-md transition-colors relative group", getTimeStatus(h))}
+                {hours.map((h) => (
+                  <div
+                    key={h}
+                    className={cn(
+                      "rounded-md transition-colors relative group",
+                      getTimeStatus(h),
+                    )}
                   >
                     <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[8px] text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                       {h}:00
@@ -310,19 +378,29 @@ const BookingForm: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-zinc-700">Department</label>
-              <input
-                required
+              <label className="text-sm font-semibold text-zinc-700">
+                Department
+              </label>
+
+              <select
                 name="department"
                 value={formData.department}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-zinc-200 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-transparent outline-none transition-all"
-                placeholder="e.g. Computer Science"
-              />
+                className="w-full px-4 py-2 border border-zinc-200 rounded-xl bg-white"
+              >
+                <option value="">Select Department</option>
+                {departments.map((dept) => (
+                  <option key={dept} value={dept}>
+                    {dept}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-zinc-700">Faculty In-Charge</label>
+              <label className="text-sm font-semibold text-zinc-700">
+                Faculty In-Charge
+              </label>
               <input
                 required
                 name="facultyInCharge"
@@ -393,7 +471,9 @@ const BookingForm: React.FC = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-zinc-700">Equipment Needed</label>
+            <label className="text-sm font-semibold text-zinc-700">
+              Equipment Needed
+            </label>
             <textarea
               name="equipment"
               value={formData.equipment}
@@ -405,7 +485,9 @@ const BookingForm: React.FC = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-zinc-700">Purpose of Event</label>
+            <label className="text-sm font-semibold text-zinc-700">
+              Purpose of Event
+            </label>
             <textarea
               required
               name="purpose"
@@ -424,9 +506,13 @@ const BookingForm: React.FC = () => {
                   <Check className="w-3 h-3 text-white" />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-zinc-900">Digital Approval</p>
+                  <p className="text-sm font-bold text-zinc-900">
+                    Digital Approval
+                  </p>
                   <p className="text-xs text-zinc-500 mt-1">
-                    By submitting this request, you agree that your verified email ({user.email}) will be used as a digital signature for this application.
+                    By submitting this request, you agree that your verified
+                    email ({user.email}) will be used as a digital signature for
+                    this application.
                   </p>
                 </div>
               </div>

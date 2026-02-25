@@ -118,23 +118,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
               name: "NOS Lab",
               type: "Lab",
               department: "Computer Science",
-              capacity: 40,
-              description:
-                "Network and Operating Systems lab with high-speed internet and 40 systems.",
-              equipment:
-                "40 Workstations, Cisco Routers, Switches, High-speed LAN",
-              imageUrl: "https://picsum.photos/seed/noslab/800/600",
+              capacity: 60,
             },
             {
               id: "system-lab",
               name: "System Lab",
               type: "Lab",
               department: "Information Technology",
-              capacity: 35,
-              description:
-                "General purpose programming lab suitable for workshops and training sessions.",
-              equipment: "35 Workstations, Projector, Whiteboard",
-              imageUrl: "https://picsum.photos/seed/systemlab/800/600",
+              capacity: 45,
             },
             {
               id: "asap-lab",
@@ -142,33 +133,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
               type: "Lab",
               department: "Skill Development",
               capacity: 60,
-              description:
-                "Advanced Skill Acquisition Program lab with modern systems and projector.",
-              equipment: "30 High-end Laptops, Smart Board, Audio System",
-              imageUrl: "https://picsum.photos/seed/asaplab/800/600",
             },
             {
               id: "cs-hall",
               name: "CS Seminar Hall",
               type: "Hall",
               department: "Computer Science",
-              capacity: 120,
-              description:
-                "Department seminar hall suitable for technical talks and events.",
-              equipment: "PA System, Projector, Air Conditioning, 120 Seats",
-              imageUrl: "https://picsum.photos/seed/cshall/800/600",
+              capacity: 60,
             },
             {
               id: "admin-hall",
               name: "Admin Block Seminar Hall",
               type: "Hall",
               department: "Administration",
-              capacity: 250,
-              description:
-                "Large hall for college-level events, meetings, and workshops.",
-              equipment:
-                "Stage, Premium Sound System, Dual Projectors, 250 Seats",
-              imageUrl: "https://picsum.photos/seed/adminhall/800/600",
+              capacity: 70,
             },
           ];
 
