@@ -64,23 +64,6 @@ const CalendarView: React.FC = () => {
     return unsubscribe;
   }, []);
 
-  const handleCancel = async (booking: Booking) => {
-    const reason = window.prompt("Please provide a reason for cancellation:");
-    if (reason === null) return;
-
-    try {
-      await updateDoc(doc(db, "bookings", booking.id), {
-        status: "cancelled",
-        rejectionReason: reason || "Cancelled by user",
-      });
-      setSelectedBooking(null);
-      alert("Booking cancelled successfully.");
-    } catch (err) {
-      console.error("Error cancelling booking:", err);
-      alert("Failed to cancel booking.");
-    }
-  };
-
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(monthStart);
   const startDate = startOfWeek(monthStart);
@@ -199,8 +182,9 @@ const CalendarView: React.FC = () => {
                 <div className="space-y-1.5">
                   {dayBookings.slice(0, 4).map((booking) => (
                     <motion.button
-                      layoutId={booking.id}
                       key={booking.id}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                       onClick={() => setSelectedBooking(booking)}
                       className={cn(
                         "w-full text-left px-2 py-1.5 rounded-xl text-[10px] font-bold truncate transition-all border shadow-sm",
@@ -232,7 +216,9 @@ const CalendarView: React.FC = () => {
         {selectedBooking && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
             <motion.div
-              layoutId={selectedBooking.id}
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
               className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl relative"
             >
               <button
@@ -325,18 +311,6 @@ const CalendarView: React.FC = () => {
                     {selectedBooking.purpose}
                   </p>
                 </div>
-
-                {(user?.uid === selectedBooking.userId || isAdmin) &&
-                  selectedBooking.status !== "cancelled" &&
-                  selectedBooking.status !== "rejected" && (
-                    <button
-                      onClick={() => handleCancel(selectedBooking)}
-                      className="w-full flex items-center justify-center gap-2 bg-zinc-100 text-zinc-600 px-6 py-3 rounded-2xl font-bold hover:bg-zinc-200 transition-all mt-4"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                      Cancel Booking
-                    </button>
-                  )}
               </div>
             </motion.div>
           </div>

@@ -12,11 +12,11 @@ import BookingForm from "./pages/BookingForm";
 import AdminPanel from "./pages/AdminPanel";
 import MyBookings from "./pages/MyBookings";
 import CalendarView from "./pages/CalendarView";
-// import { NotificationProvider } from "./contexts/NotificationContext";
+import AdminResources from "./pages/AdminResources";
+import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
 export default function App() {
   return (
     <AuthProvider>
-      {/* <NotificationProvider> */}
       <Router>
         <Routes>
           <Route path="/login" element={<Login />} />
@@ -24,7 +24,22 @@ export default function App() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/my-bookings" element={<MyBookings />} />
             <Route path="/calendar" element={<CalendarView />} />
-            <Route path="/admin" element={<AdminPanel />} />
+            <Route
+              path="/admin"
+              element={
+                <ProtectedAdminRoute>
+                  <AdminPanel />
+                </ProtectedAdminRoute>
+              }
+            />
+            <Route
+              path="/admin/resources"
+              element={
+                <ProtectedAdminRoute>
+                  <AdminResources />
+                </ProtectedAdminRoute>
+              }
+            />
             <Route path="/book/:resourceId" element={<BookingForm />} />
             <Route path="/edit/:bookingId" element={<BookingForm />} />
           </Route>
