@@ -69,12 +69,14 @@ const BookingForm: React.FC = () => {
     "Administration",
   ];
   const ORGNATIZATION = [
-    "GDG On campus",
-    "Mulearn",
     "CSI",
+    "Ecell",
+    "GDG On campus",
     "IEDC",
     "IEEE",
-    "ecell",
+    "Mulearn",
+    "ThinkerHUB",
+
     "NIC",
   ];
   const toMinutes = (time: string) => {
