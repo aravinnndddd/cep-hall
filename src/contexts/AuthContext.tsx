@@ -88,7 +88,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             isActive: true,
           },
           { email: "principal@college.edu", role: "principal", isActive: true },
-          { email: "admin@college.edu", role: "principal", isActive: true },
+          { email: "admin@college.edu", role: "staff", isActive: true },
         ];
         for (const app of defaultApprovers) {
           await setDoc(doc(db, "authorizedApprovers", app.email), app);

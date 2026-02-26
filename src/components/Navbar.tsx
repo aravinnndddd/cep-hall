@@ -1,11 +1,57 @@
-import React from "react";
+import React, { use, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { LogOut, LayoutDashboard, Calendar, User, Shield } from "lucide-react";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
+import { db } from "../lib/firebase";
 
 const Navbar: React.FC = () => {
-  const { user, logout, isAdmin } = useAuth();
+  const { user, logout, isAdmin, approver } = useAuth();
   const navigate = useNavigate();
+  const [pendingCount, setPendingCount] = useState(0);
+
+  useEffect(() => {
+    if (!isAdmin || !approver) {
+      setPendingCount(0);
+      return;
+    }
+
+    let q: any = null;
+
+    // HOD → department based
+    if (approver.role === "hod" && approver.department) {
+      q = query(
+        collection(db, "bookings"),
+        where("status", "==", "waiting_hod"),
+        where("department", "==", approver.department),
+      );
+    }
+
+    // Staff → resource based
+    else if (approver.role === "staff" && approver.resourceId) {
+      q = query(
+        collection(db, "bookings"),
+        where("status", "==", "waiting_staff"),
+        where("resourceId", "==", approver.resourceId),
+      );
+    }
+
+    // Principal / Admin → all principal approvals
+    else if (approver.role === "principal") {
+      q = query(
+        collection(db, "bookings"),
+        where("status", "==", "waiting_principal"),
+      );
+    }
+
+    if (!q) return;
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setPendingCount(snapshot.size);
+    });
+
+    return () => unsubscribe();
+  }, [isAdmin, approver]);
 
   const handleLogout = async () => {
     await logout();
@@ -51,6 +97,11 @@ const Navbar: React.FC = () => {
                 >
                   <Shield className="w-4 h-4" />
                   Admin
+                  {pendingCount > 0 && (
+                    <span className=" bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full ml-1">
+                      {pendingCount}
+                    </span>
+                  )}
                 </Link>
               )}
             </div>
