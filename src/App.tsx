@@ -14,14 +14,16 @@ import MyBookings from "./pages/MyBookings";
 import CalendarView from "./pages/CalendarView";
 import AdminResources from "./pages/AdminResources";
 import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
+import LandingPage from "./pages/LandingPage";
 export default function App() {
   return (
     <AuthProvider>
       <Router>
         <Routes>
+          <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
           <Route element={<Layout />}>
-            <Route path="/" element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/my-bookings" element={<MyBookings />} />
             <Route path="/calendar" element={<CalendarView />} />
             <Route

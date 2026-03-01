@@ -22,11 +22,11 @@ const Navbar: React.FC = () => {
 
   const handleLogout = async () => {
     await logout();
-    navigate("/login");
+    navigate("/");
   };
 
   const navLinks = [
-    { to: "/", label: "Dashboard", icon: LayoutDashboard },
+    { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { to: "/calendar", label: "Calendar", icon: Calendar },
     { to: "/my-bookings", label: "My Bookings", icon: Clock },
     ...(isAdmin ? [{ to: "/admin", label: "Admin", icon: Shield }] : []),
