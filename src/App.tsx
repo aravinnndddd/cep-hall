@@ -15,6 +15,7 @@ import CalendarView from "./pages/CalendarView";
 import AdminResources from "./pages/AdminResources";
 import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
 import LandingPage from "./pages/LandingPage";
+import AdminApprovers from "./pages/AdminApprovers";
 export default function App() {
   return (
     <AuthProvider>
@@ -31,6 +32,14 @@ export default function App() {
               element={
                 <ProtectedAdminRoute>
                   <AdminPanel />
+                </ProtectedAdminRoute>
+              }
+            />
+            <Route
+              path="/admin/approvers"
+              element={
+                <ProtectedAdminRoute>
+                  <AdminApprovers />
                 </ProtectedAdminRoute>
               }
             />

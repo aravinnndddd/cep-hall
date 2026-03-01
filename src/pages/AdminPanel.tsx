@@ -184,12 +184,21 @@ const AdminPanel: React.FC = () => {
           ))}
         </div>
       </header>
-      <Link
-        to="/admin/resources"
-        className="bg-red-700 text-white px-4 py-2 rounded-lg font-bold hover:bg-red-800 transition-colors inline-flex items-center gap-2"
-      >
-        Manage Resources
-      </Link>
+      <div className="gap-5 flex">
+        <Link
+          to="/admin/resources"
+          className="bg-red-700 text-white px-4 py-2 rounded-lg font-bold hover:bg-red-800 transition-colors inline-flex items-center gap-2"
+        >
+          Manage Resources
+        </Link>
+        <Link
+          to="/admin/approvers"
+          className="bg-red-700 text-white px-4 py-2 rounded-lg font-bold hover:bg-red-800 transition-colors inline-flex items-center gap-2"
+        >
+          Manage Approvers
+        </Link>
+      </div>
+
       <div className="space-y-4">
         {filteredBookings.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-2xl border border-dashed border-zinc-300">

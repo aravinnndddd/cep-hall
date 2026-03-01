@@ -7,7 +7,7 @@ import {
   User,
 } from "firebase/auth";
 import { auth, googleProvider, db } from "../lib/firebase";
-import { collection, getDocs, doc, setDoc, getDoc } from "firebase/firestore";
+import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { Resource, Approver } from "../types";
 
 interface AuthContextType {
@@ -24,6 +24,9 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// SUPER ADMIN EMAIL
+const SUPER_ADMIN = "admin@college.edu";
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
@@ -33,139 +36,54 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [approver, setApprover] = useState<Approver | null>(null);
   const [resources, setResources] = useState<Resource[]>([]);
 
+  // ---------------------------------------------------
+  // Fetch Approver Role (SECURE)
+  // ---------------------------------------------------
   const fetchApproverData = async (email: string) => {
     try {
+      // SUPER ADMIN (Full access)
+      if (email === SUPER_ADMIN) {
+        setApprover({
+          email,
+          role: "principal",
+          isActive: true,
+        });
+        setIsAdmin(true);
+        return;
+      }
+
+      // Check Firestore for role
       const approverDoc = await getDoc(doc(db, "authorizedApprovers", email));
+
       if (approverDoc.exists()) {
         const data = approverDoc.data() as Approver;
+
         if (data.isActive) {
           setApprover(data);
-          setIsAdmin(true); // Approvers are considered admins in this context
+          setIsAdmin(true);
           return;
         }
       }
 
-      // Fallback for hardcoded admin
-      if (email === "admin@college.edu") {
-        const adminApprover: Approver = {
-          email,
-          role: "principal",
-          isActive: true,
-        };
-        setApprover(adminApprover);
-        setIsAdmin(true);
-      } else {
-        setApprover(null);
-        setIsAdmin(false);
-      }
+      // Normal user
+      setApprover(null);
+      setIsAdmin(false);
     } catch (error) {
       console.error("Error fetching approver data:", error);
+      setApprover(null);
+      setIsAdmin(false);
     }
   };
 
-  const seedApprovers = async () => {
-    try {
-      const snapshot = await getDocs(collection(db, "authorizedApprovers"));
-      if (snapshot.empty) {
-        console.log("Seeding default approvers...");
-        const defaultApprovers: Approver[] = [
-          {
-            email: "hod.cs@college.edu",
-            role: "hod",
-            department: "Computer Science",
-            isActive: true,
-          },
-          {
-            email: "staff.nos@college.edu",
-            role: "staff",
-            resourceId: "nos-lab",
-            isActive: true,
-          },
-          {
-            email: "staff.asap@college.edu",
-            role: "staff",
-            resourceId: "asap-lab",
-            isActive: true,
-          },
-          { email: "principal@college.edu", role: "principal", isActive: true },
-          { email: "admin@college.edu", role: "staff", isActive: true },
-        ];
-        for (const app of defaultApprovers) {
-          await setDoc(doc(db, "authorizedApprovers", app.email), app);
-        }
-      }
-    } catch (error) {
-      console.warn(
-        "Could not seed approvers (likely permission issue):",
-        error,
-      );
-    }
-  };
-
+  // ---------------------------------------------------
+  // Fetch Resources (Read Only)
+  // ---------------------------------------------------
   const fetchResources = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, "resources"));
-      let resourceList = querySnapshot.docs.map(
+      const resourceList = querySnapshot.docs.map(
         (doc) => ({ id: doc.id, ...doc.data() }) as Resource,
       );
-
-      if (resourceList.length === 0) {
-        try {
-          console.log("Seeding default resources...");
-          const defaultResources: Resource[] = [
-            {
-              id: "nos-lab",
-              name: "NOS Lab",
-              type: "Lab",
-              department: "Computer Science",
-              capacity: 60,
-            },
-            {
-              id: "system-lab",
-              name: "System Lab",
-              type: "Lab",
-              department: "Information Technology",
-              capacity: 45,
-            },
-            {
-              id: "asap-lab",
-              name: "ASAP Lab",
-              type: "Lab",
-              department: "Skill Development",
-              capacity: 60,
-            },
-            {
-              id: "cs-hall",
-              name: "CS Seminar Hall",
-              type: "Hall",
-              department: "Computer Science",
-              capacity: 60,
-            },
-            {
-              id: "admin-hall",
-              name: "Admin Block Seminar Hall",
-              type: "Hall",
-              department: "Administration",
-              capacity: 70,
-            },
-          ];
-
-          for (const res of defaultResources) {
-            const { id, ...data } = res;
-            await setDoc(doc(db, "resources", id), data);
-          }
-          // Re-fetch after seeding
-          const newSnapshot = await getDocs(collection(db, "resources"));
-          resourceList = newSnapshot.docs.map(
-            (doc) => ({ id: doc.id, ...doc.data() }) as Resource,
-          );
-        } catch (seedError) {
-          console.warn(
-            "Could not seed resources (likely permission issue):",
-            seedError,
-          );
-        }
-      }
 
       setResources(resourceList);
     } catch (error) {
@@ -173,18 +91,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  // ---------------------------------------------------
+  // Auth State Listener
+  // ---------------------------------------------------
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setUser(user);
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      setUser(currentUser);
       setLoading(true);
 
-      if (user && user.email) {
-        await seedApprovers();
-        await fetchApproverData(user.email);
+      if (currentUser && currentUser.email) {
+        await fetchApproverData(currentUser.email);
         await fetchResources();
       } else {
         setApprover(null);
         setIsAdmin(false);
+        setResources([]);
       }
 
       setLoading(false);
@@ -193,6 +114,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     return unsubscribe;
   }, []);
 
+  // ---------------------------------------------------
+  // Auth Functions
+  // ---------------------------------------------------
   const login = async () => {
     await signInWithPopup(auth, googleProvider);
   };
@@ -224,9 +148,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 };
 
+// ---------------------------------------------------
+// Hook
+// ---------------------------------------------------
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
