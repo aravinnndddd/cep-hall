@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
+import { db } from "../lib/firebase";
 import { useAuth } from "../contexts/AuthContext";
 import {
   LogOut,
@@ -15,11 +17,53 @@ import { motion, AnimatePresence } from "motion/react";
 import { cn } from "../lib/utils";
 
 const Navbar: React.FC = () => {
-  const { user, logout, isAdmin } = useAuth();
+  const { user, logout, isAdmin, approver } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
+  const [pendingCount, setPendingCount] = useState(0);
+  useEffect(() => {
+    if (!isAdmin || !approver) {
+      setPendingCount(0);
+      return;
+    }
 
+    let q: any = null;
+
+    // HOD → department based
+    if (approver.role === "hod" && approver.department) {
+      q = query(
+        collection(db, "bookings"),
+        where("status", "==", "waiting_hod"),
+        where("department", "==", approver.department),
+      );
+    }
+
+    // Staff → resource based
+    else if (approver.role === "staff" && approver.resourceId) {
+      q = query(
+        collection(db, "bookings"),
+        where("status", "==", "waiting_staff"),
+        where("resourceId", "==", approver.resourceId),
+      );
+    }
+
+    // Principal → all principal approvals
+    else if (approver.role === "principal") {
+      q = query(
+        collection(db, "bookings"),
+        where("status", "==", "waiting_principal"),
+      );
+    }
+
+    if (!q) return;
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setPendingCount(snapshot.size);
+    });
+
+    return () => unsubscribe();
+  }, [isAdmin, approver]);
   const handleLogout = async () => {
     await logout();
     navigate("/");
@@ -65,6 +109,11 @@ const Navbar: React.FC = () => {
                   >
                     <link.icon className="w-4 h-4" />
                     {link.label}
+                    {link.to === "/admin" && pendingCount > 0 && (
+                      <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full ml-1">
+                        {pendingCount}
+                      </span>
+                    )}
                   </Link>
                 ))}
               </div>
@@ -152,6 +201,11 @@ const Navbar: React.FC = () => {
                   >
                     <link.icon className="w-5 h-5" />
                     {link.label}
+                    {link.to === "/admin" && pendingCount > 0 && (
+                      <span className="ml-auto bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                        {pendingCount}
+                      </span>
+                    )}
                   </Link>
                 ))}
               </div>

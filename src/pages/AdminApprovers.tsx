@@ -90,92 +90,116 @@ const AdminApprovers: React.FC = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
-      <h1 className="text-2xl font-bold">Manage Approvers</h1>
+    <div className="min-h-screen ">
+      <div className="max-w-5xl mx-auto space-y-8">
+        {/* Header */}
+        <div className="flex justify-between items-center">
+          <h1 className="text-3xl font-bold text-zinc-800 tracking-tight">
+            Manage Approvers
+          </h1>
+        </div>
 
-      {/* Form */}
-      <div className="bg-white border rounded-xl p-6 space-y-4">
-        <input
-          name="email"
-          placeholder="User Email"
-          value={form.email}
-          onChange={handleChange}
-          className="w-full border p-2 rounded"
-        />
+        {/* Form Card */}
+        <div className="bg-white/70 backdrop-blur-md shadow-xl rounded-2xl p-8 space-y-5 border border-zinc-200">
+          <h3 className="text-lg font-semibold text-zinc-700">
+            Add / Update Approver
+          </h3>
 
-        <select
-          name="role"
-          value={form.role}
-          onChange={handleChange}
-          className="w-full border p-2 rounded"
-        >
-          <option value="hod">HOD</option>
-          <option value="staff">Staff</option>
-          <option value="principal">Principal</option>
-        </select>
-
-        {form.role === "hod" && (
-          <select
-            name="department"
-            value={form.department}
+          <input
+            name="email"
+            placeholder="User Email"
+            value={form.email}
             onChange={handleChange}
-            className="w-full border p-2 rounded"
-          >
-            <option value="">Select Department</option>
-            {departments.map((d) => (
-              <option key={d}>{d}</option>
-            ))}
-          </select>
-        )}
+            className="w-full border border-zinc-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-900 transition"
+          />
 
-        {form.role === "staff" && (
           <select
-            name="resourceId"
-            value={form.resourceId}
+            name="role"
+            value={form.role}
             onChange={handleChange}
-            className="w-full border p-2 rounded"
+            className="w-full border border-zinc-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-900 transition bg-white"
           >
-            <option value="">Select Resource</option>
-            {resources.map((r) => (
-              <option key={r.id} value={r.id}>
-                {r.name}
-              </option>
-            ))}
+            <option value="hod">HOD</option>
+            <option value="staff">Staff</option>
+            <option value="principal">Principal</option>
           </select>
-        )}
 
-        <button
-          onClick={handleSave}
-          className="bg-zinc-900 text-white px-6 py-2 rounded"
-        >
-          Add / Update Approver
-        </button>
-      </div>
-
-      {/* List */}
-      <div className="space-y-3">
-        {approvers.map((a) => (
-          <div
-            key={a.id}
-            className="border p-4 rounded-lg flex justify-between items-center"
-          >
-            <div>
-              <p className="font-bold">{a.email}</p>
-              <p className="text-sm text-zinc-500">
-                Role: {a.role}
-                {a.department && ` • Dept: ${a.department}`}
-                {a.resourceId && ` • Resource: ${a.resourceId}`}
-              </p>
-            </div>
-
-            <button
-              onClick={() => handleDelete(a.id)}
-              className="px-3 py-1 bg-red-100 rounded"
+          {form.role === "hod" && (
+            <select
+              name="department"
+              value={form.department}
+              onChange={handleChange}
+              className="w-full border border-zinc-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-900 transition bg-white"
             >
-              Remove
-            </button>
-          </div>
-        ))}
+              <option value="">Select Department</option>
+              {departments.map((d) => (
+                <option key={d}>{d}</option>
+              ))}
+            </select>
+          )}
+
+          {form.role === "staff" && (
+            <select
+              name="resourceId"
+              value={form.resourceId}
+              onChange={handleChange}
+              className="w-full border border-zinc-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-900 transition bg-white"
+            >
+              <option value="">Select Resource</option>
+              {resources.map((r) => (
+                <option key={r.id} value={r.id}>
+                  {r.name}
+                </option>
+              ))}
+            </select>
+          )}
+
+          <button
+            onClick={handleSave}
+            className="w-full bg-zinc-900 hover:bg-zinc-800 text-white py-3 rounded-xl font-medium shadow-md transition-all duration-300 hover:scale-[1.02]"
+          >
+            Save Approver
+          </button>
+        </div>
+
+        {/* Approver List */}
+        <div className="grid gap-4">
+          {approvers.map((a) => (
+            <div
+              key={a.id}
+              className="bg-white shadow-md hover:shadow-xl transition-all duration-300 rounded-2xl p-6 flex justify-between items-center border border-zinc-200"
+            >
+              <div>
+                <p className="text-lg font-semibold text-zinc-800">{a.email}</p>
+
+                <div className="flex items-center gap-2 mt-2 text-sm">
+                  <span className="px-3 py-1 rounded-full bg-zinc-200 text-zinc-700 capitalize">
+                    {a.role}
+                  </span>
+
+                  {a.department && (
+                    <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-700">
+                      {a.department}
+                    </span>
+                  )}
+
+                  {a.resourceId && (
+                    <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700">
+                      Resource Assigned
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <button
+                onClick={() => handleDelete(a.id)}
+                className="px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition"
+              >
+                Remove
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
