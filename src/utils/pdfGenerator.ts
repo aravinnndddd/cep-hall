@@ -5,87 +5,135 @@ import { format } from "date-fns";
 export const generateRequestLetter = async (booking: Booking) => {
   const doc = new jsPDF();
   const margin = 20;
-  let y = 30;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const lineHeight = 7;
+  let y = 25;
 
-  // Header
-  doc.setFontSize(18);
+  // ===== Header =====
   doc.setFont("helvetica", "bold");
-  doc.text("COLLEGE RESOURCE BOOKING REQUEST", 105, y, { align: "center" });
-  
-  y += 20;
-  doc.setFontSize(12);
+  doc.setFontSize(16);
+  doc.text("COLLEGE RESOURCE BOOKING REQUEST", pageWidth / 2, y, {
+    align: "center",
+  });
+
+  y += 10;
+  doc.setLineWidth(0.5);
+  doc.line(margin, y, pageWidth - margin, y); // underline
+
+  y += 10;
   doc.setFont("helvetica", "normal");
-  doc.text(`Date: ${format(new Date(), "dd/MM/yyyy")}`, margin, y);
-  
-  y += 15;
+  doc.setFontSize(11);
+  doc.text(`Date: ${format(new Date(), "dd/MM/yyyy")}`, pageWidth - margin, y, {
+    align: "right",
+  });
+
+  // ===== Address =====
+  y += 12;
   doc.text("To,", margin, y);
-  y += 7;
+  y += lineHeight;
   doc.text("The Principal / Administrative Officer,", margin, y);
-  y += 7;
+  y += lineHeight;
   doc.text("College Campus.", margin, y);
 
-  y += 15;
+  // ===== Subject =====
+  y += 12;
   doc.setFont("helvetica", "bold");
-  doc.text(`Subject: Request for booking ${booking.resourceName}`, margin, y);
+  doc.text(
+    `Subject: Request for booking of ${booking.resourceName}`,
+    margin,
+    y
+  );
 
-  y += 15;
+  // ===== Body =====
+  y += 10;
   doc.setFont("helvetica", "normal");
+
   const bodyText = `Respected Sir/Madam,
 
-I am writing to formally request the booking of ${booking.resourceName} for the event "${booking.eventName}" organized by the ${booking.department} department.
+I request permission to book the ${booking.resourceName} for the event "${booking.eventName}" organized by the ${booking.department} department.
 
-The event details are as follows:
-- Date: ${booking.date}
-- Time: ${booking.startTime} to ${booking.endTime}
-- Expected Participants: ${booking.participants}
-- Purpose: ${booking.purpose}
-- Equipment Required: ${booking.equipment || "None"}
+Event Details:
+Date: ${booking.date}
+Time: ${booking.startTime} - ${booking.endTime}
+Participants: ${booking.participants}
+Purpose: ${booking.purpose}
+Equipment: ${booking.equipment || "None"}
 
-We assure you that the resource will be used responsibly and all college guidelines will be followed during the event. We request you to kindly grant us permission for the same.
+We assure responsible usage and adherence to all college rules. Kindly grant permission for the above request.
 
-Thanking you,`;
+Thanking you.`;
 
-  const splitText = doc.splitTextToSize(bodyText, 170);
-  doc.text(splitText, margin, y);
-  
-  y += splitText.length * 7 + 10;
+  const splitBody = doc.splitTextToSize(bodyText, pageWidth - margin * 2);
+  doc.text(splitBody, margin, y);
+  y += splitBody.length * lineHeight + 10;
 
-  // Signatures
+  // ===== Signature =====
   doc.text("Yours faithfully,", margin, y);
-  y += 10;
-  
+  y += lineHeight * 2;
+
   doc.setFontSize(10);
   doc.text(`Digitally Signed by: ${booking.organizerName}`, margin, y);
-  doc.text(`Email: ${booking.userId}@college.edu`, margin, y + 5); // Fallback if no email in booking
-  
-  y += 20;
-  doc.setFontSize(12);
-  doc.text(`${booking.organizerName}`, margin, y);
-  doc.text(`(Organizer, ${booking.department})`, margin, y + 7);
+  y += lineHeight;
+  doc.text(`Email: ${booking.userId}@college.edu`, margin, y);
 
-  // Approval Section
-  y = 220;
+  y += lineHeight * 2;
+  doc.setFontSize(11);
+  doc.text(booking.organizerName, margin, y);
+  y += lineHeight;
+  doc.text(`Organizer, ${booking.department}`, margin, y);
+
+  // ===== Approval Section =====
+  y += 15;
   doc.setFont("helvetica", "bold");
-  doc.text("APPROVAL STATUS", margin, y);
-  y += 10;
+  doc.setFontSize(12);
+  doc.text("Approval Status", margin, y);
+
+  y += 8;
   doc.setFont("helvetica", "normal");
   doc.setFontSize(10);
 
   const approvals = [
-    { label: "HOD Approval", approved: booking.hodApproved, email: booking.hodEmail, date: booking.hodApprovedAt },
-    { label: "Staff Approval", approved: booking.staffApproved, email: booking.staffEmail, date: booking.staffApprovedAt },
-    { label: "Principal Approval", approved: booking.principalApproved, email: booking.principalEmail, date: booking.principalApprovedAt },
+    {
+      label: "HOD",
+      approved: booking.hodApproved,
+      email: booking.hodEmail,
+      date: booking.hodApprovedAt,
+    },
+    {
+      label: "Staff",
+      approved: booking.staffApproved,
+      email: booking.staffEmail,
+      date: booking.staffApprovedAt,
+    },
+    {
+      label: "Principal",
+      approved: booking.principalApproved,
+      email: booking.principalEmail,
+      date: booking.principalApprovedAt,
+    },
   ];
 
   approvals.forEach((app) => {
     const status = app.approved ? "APPROVED" : "PENDING";
-    const dateStr = app.date ? format(app.date.toDate(), "dd/MM/yyyy HH:mm") : "-";
+    const dateStr = app.date
+      ? format(app.date.toDate(), "dd/MM/yyyy HH:mm")
+      : "-";
+
+    // Left column
     doc.text(`${app.label}: ${status}`, margin, y);
+
+    // Right column (aligned)
     if (app.approved) {
-      doc.text(`By: ${app.email} on ${dateStr}`, margin + 80, y);
+      doc.text(`By: ${app.email}`, pageWidth / 2, y);
+      y += lineHeight;
+      doc.text(`On: ${dateStr}`, pageWidth / 2, y);
     }
-    y += 7;
+
+    y += lineHeight + 2;
   });
 
-  doc.save(`Request_Letter_${booking.eventName.replace(/\s+/g, "_")}.pdf`);
+  // ===== Save =====
+  doc.save(
+    `Request_Letter_${booking.eventName.replace(/\s+/g, "_")}.pdf`
+  );
 };

@@ -1,6 +1,6 @@
 import { Timestamp } from "firebase/firestore";
 
-export type BookingStatus = "waiting_hod" | "waiting_staff" | "waiting_principal" | "approved" | "correction_allowed" | "rejected";
+export type BookingStatus = "waiting_hod" | "waiting_staff" | "waiting_principal" | "approved" | "correction_allowed" | "rejected" | "cancelled";
 
 export interface Resource {
   id: string;
@@ -8,9 +8,7 @@ export interface Resource {
   type: "Lab" | "Hall";
   department: string;
   capacity: number;
-  description: string;
-  equipment: string;
-  imageUrl?: string;
+
 }
 
 export interface Booking {
@@ -20,12 +18,15 @@ export interface Booking {
   organizerName: string;
   department: string;
   facultyInCharge: string;
+  organization: string;
   resourceId: string;
   resourceName: string;
   date: string; // YYYY-MM-DD
+  endDate?: string; // YYYY-MM-DD
   startTime: string; // HH:mm
   endTime: string; // HH:mm
   participants: number;
+
   equipment: string;
   purpose: string;
   status: BookingStatus;

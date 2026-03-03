@@ -21,10 +21,6 @@ const DEFAULT_RESOURCES: Resource[] = [
     type: "Lab",
     department: "Computer Science",
     capacity: 60,
-    description:
-      "Network and Operating Systems lab with high-speed internet and 40 systems.",
-    equipment: "40 Workstations, Cisco Routers, Switches, High-speed LAN",
-    // imageUrl: "https://picsum.photos/seed/noslab/800/600"
   },
   {
     id: "system-lab",
@@ -32,10 +28,6 @@ const DEFAULT_RESOURCES: Resource[] = [
     type: "Lab",
     department: "Information Technology",
     capacity: 45,
-    description:
-      "General purpose programming lab suitable for workshops and training sessions.",
-    equipment: "35 Workstations, Projector, Whiteboard",
-    // imageUrl: "https://picsum.photos/seed/systemlab/800/600"
   },
   {
     id: "asap-lab",
@@ -43,32 +35,20 @@ const DEFAULT_RESOURCES: Resource[] = [
     type: "Lab",
     department: "Skill Development",
     capacity: 60,
-    description:
-      "Advanced Skill Acquisition Program lab with modern systems and projector.",
-    equipment: "30 High-end Laptops, Smart Board, Audio System",
-    // imageUrl: "https://picsum.photos/seed/asaplab/800/600"
   },
   {
     id: "cs-hall",
     name: "CS Seminar Hall",
     type: "Hall",
     department: "Computer Science",
-    capacity: 120,
-    description:
-      "Department seminar hall suitable for technical talks and events.",
-    equipment: "PA System, Projector, Air Conditioning, 120 Seats",
-    // imageUrl: "https://picsum.photos/seed/cshall/800/600",
+    capacity: 60,
   },
   {
     id: "admin-hall",
     name: "Admin Block Seminar Hall",
     type: "Hall",
     department: "Administration",
-    capacity: 250,
-    description:
-      "Large hall for college-level events, meetings, and workshops.",
-    equipment: "Stage, Premium Sound System, Dual Projectors, 250 Seats",
-    // imageUrl: "https://picsum.photos/seed/adminhall/800/600",
+    capacity: 70,
   },
 ];
 
@@ -136,30 +116,6 @@ const ResourceCard: React.FC<{ resource: Resource }> = ({ resource }) => {
       animate={{ opacity: 1, y: 0 }}
       className="group bg-white rounded-3xl border border-zinc-200 overflow-hidden hover:shadow-2xl hover:shadow-zinc-200/50 transition-all duration-500 flex flex-col h-full"
     >
-      {/* <div className="relative h-48 overflow-hidden">
-        <img
-          src={
-            resource.imageUrl ||
-            `https://picsum.photos/seed/${resource.id}/800/600`
-          }
-          alt={resource.name}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-          referrerPolicy="no-referrer"
-        />
-        <div className="absolute top-4 left-4">
-          <span
-            className={cn(
-              "px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm",
-              resource.type === "Lab"
-                ? "bg-emerald-500 text-white"
-                : "bg-indigo-500 text-white",
-            )}
-          >
-            {resource.type}
-          </span>
-        </div>
-      </div> */}
-
       <div className="p-6 space-y-4 flex-1 flex flex-col">
         <div className="space-y-1">
           <h3 className="text-xl font-bold text-zinc-900 group-hover:text-zinc-700 transition-colors">
@@ -178,24 +134,6 @@ const ResourceCard: React.FC<{ resource: Resource }> = ({ resource }) => {
           <div className="flex items-center gap-1.5">
             <Clock className="w-4 h-4" />
             <span>24/7 Access</span>
-          </div>
-        </div>
-
-        <div className="bg-zinc-50 rounded-2xl p-4 space-y-3 flex-1">
-          <div className="flex gap-2">
-            <Info className="w-4 h-4 text-zinc-400 shrink-0 mt-0.5" />
-            <p className="text-sm text-zinc-600 leading-relaxed">
-              {resource.description}
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Cpu className="w-4 h-4 text-zinc-400 shrink-0 mt-0.5" />
-            <p className="text-xs text-zinc-500 italic">
-              <span className="font-bold not-italic text-zinc-400 uppercase mr-1">
-                Equipment:
-              </span>
-              {resource.equipment}
-            </p>
           </div>
         </div>
 

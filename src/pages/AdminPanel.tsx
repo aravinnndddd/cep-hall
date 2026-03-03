@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { generateRequestLetter } from "../utils/pdfGenerator";
 import { cn } from "../lib/utils";
+import { Link } from "react-router-dom";
 
 const AdminPanel: React.FC = () => {
   const { user, approver } = useAuth();
@@ -183,6 +184,20 @@ const AdminPanel: React.FC = () => {
           ))}
         </div>
       </header>
+      <div className="gap-5 flex">
+        <Link
+          to="/admin/resources"
+          className="bg-red-700 text-white px-4 py-2 rounded-lg font-bold hover:bg-red-800 transition-colors inline-flex items-center gap-2"
+        >
+          Manage Resources
+        </Link>
+        <Link
+          to="/admin/approvers"
+          className="bg-red-700 text-white px-4 py-2 rounded-lg font-bold hover:bg-red-800 transition-colors inline-flex items-center gap-2"
+        >
+          Manage Approvers
+        </Link>
+      </div>
 
       <div className="space-y-4">
         {filteredBookings.length === 0 ? (
