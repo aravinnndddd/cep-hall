@@ -1,3 +1,14 @@
+/**
+ * @file vite.config.ts
+ * @description Vite configuration for Campus Hall application
+ * 
+ * Configures:
+ * - React and Tailwind CSS plugins
+ * - Path aliases for cleaner imports
+ * - Environment variable loading
+ * - HMR settings for development
+ */
+
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';

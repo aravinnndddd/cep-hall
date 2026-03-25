@@ -1,7 +1,34 @@
+/**
+ * @file pdfGenerator.ts
+ * @description Generates PDF documents for approved booking requests.
+ * Creates formal letter documents suitable for institutional records and filing.
+ */
+
 import { jsPDF } from "jspdf";
 import { Booking } from "../types";
 import { format } from "date-fns";
 
+/**
+ * Generate a formal booking request letter as PDF
+ *
+ * Creates a professional letter document containing:
+ * - Header with institution details
+ * - Address and date
+ * - Event details and requirements
+ * - Digital signature information
+ * - Footer with institution seal placeholder
+ *
+ * The PDF can be printed or stored as institutional record.
+ *
+ * @async
+ * @param {Booking} booking - The booking object to generate letter for
+ * @returns {Promise<void>}
+ *
+ * @example
+ * const booking = bookingData;
+ * await generateRequestLetter(booking);
+ * // Browser will open PDF download dialog
+ */
 export const generateRequestLetter = async (booking: Booking) => {
   const doc = new jsPDF();
   const margin = 20;
