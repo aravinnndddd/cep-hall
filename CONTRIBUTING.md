@@ -7,7 +7,7 @@ Thank you for your interest in contributing to Campus Hall! We welcome all contr
 1. **Fork the repository** on GitHub
 2. **Clone your fork** locally:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/campus-hall.git
+   git clone https://github.com/aravinnndddd/campus-hall.git
    cd campus-hall
    ```
 3. **Create a new branch** for your feature:
@@ -265,7 +265,7 @@ Found a bug? Have a feature request?
 
 **Before reporting:**
 
-1. Check existing [GitHub Issues](https://github.com/your-org/campus-hall/issues)
+1. Check existing [GitHub Issues](https://github.com/aravinnndddd/campus-hall/issues)
 2. Search closed issues for solutions
 
 **When reporting:**
