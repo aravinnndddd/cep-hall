@@ -1,4 +1,4 @@
-# CEP Lab Booker
+# Campus Hall
 
 A web-based system to streamline and simplify campus resource booking for classes, workshops, meetings, and events.
 
@@ -6,7 +6,7 @@ A web-based system to streamline and simplify campus resource booking for classe
 
 ## Overview
 
-CEP Lab Booker is a resource management platform that allows students and staff to reserve campus facilities such as laboratories, seminar halls, classrooms, and other resources through an online interface.
+Campus Hall is a resource management platform that allows students and staff to reserve campus facilities such as laboratories, seminar halls, classrooms, and other resources through an online interface.
 
 The system replaces manual booking processes with a transparent, real-time, and role-based approval workflow.
 

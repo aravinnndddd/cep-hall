@@ -90,9 +90,11 @@ const Navbar: React.FC = () => {
               >
                 <Menu className="w-6 h-6" />
               </button>
+
               <Link to="/" className="flex items-center gap-2">
+                <img src="/logo.png" alt="logo" className="flex w-12" />
                 <span className="font-bold text-xl tracking-tight text-zinc-900">
-                  CEP lab Booker
+                  Campus Hall
                 </span>
               </Link>
               <div className="hidden sm:ml-8 sm:flex sm:space-x-8">

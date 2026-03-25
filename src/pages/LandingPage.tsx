@@ -23,9 +23,9 @@ const LandingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           <div className="flex items-center gap-2">
             {/* LOGO */}
-
+            <img src="/logo.png" alt="logo" className="flex w-12" />
             <span className="font-bold text-2xl tracking-tight text-zinc-900">
-              CEP Lab Booker
+              Campus Hall
             </span>
           </div>
           <div className="flex items-center gap-4">
@@ -163,7 +163,7 @@ const LandingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-6 py-10 grid gap-8 md:grid-cols-3">
           {/* Project Info */}
           <div>
-            <h3 className="text-white font-bold text-lg">CEP Lab Booker</h3>
+            <h3 className="text-white font-bold text-lg">Campus Hall</h3>
             <p className="text-sm mt-2 text-zinc-400">
               A smart platform to manage and book campus resources for classes,
               workshops, meetings, and events.
@@ -220,7 +220,7 @@ const LandingPage: React.FC = () => {
 
         {/* Bottom */}
         <div className="border-t border-zinc-800 text-center py-4 text-xs text-zinc-500">
-          © {new Date().getFullYear()} CEP Lab Booker. All rights reserved.
+          © {new Date().getFullYear()} Campus Hall. All rights reserved.
         </div>
       </footer>
     </div>

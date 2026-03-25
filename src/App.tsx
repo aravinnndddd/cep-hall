@@ -17,11 +17,13 @@ import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
 import LandingPage from "./pages/LandingPage";
 import AdminApprovers from "./pages/AdminApprovers";
 import { Toaster } from "react-hot-toast";
+import SeoManager from "./components/SeoManager";
 export default function App() {
   return (
     <AuthProvider>
       <Toaster position="top-right" />
       <Router>
+        <SeoManager />
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />

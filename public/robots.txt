@@ -1,0 +1,26 @@
+# Googlebot optimizations
+User-agent: Googlebot
+Allow: /
+Allow: /logo.png
+Allow: /favicon.png
+Disallow: /admin
+Disallow: /login
+Disallow: /dashboard
+Disallow: /my-bookings
+Disallow: /edit/
+Disallow: /book/
+Crawl-delay: 0
+
+# Other bots
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /login
+Disallow: /dashboard
+Disallow: /my-bookings
+Disallow: /edit/
+Disallow: /book/
+Crawl-delay: 1
+
+# Sitemap
+Sitemap: https://campushall.vercel.app/sitemap.xml
