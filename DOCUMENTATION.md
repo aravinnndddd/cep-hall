@@ -184,10 +184,10 @@ await generateRequestLetter(booking);
 
 ## 🤝 Community & Support
 
-- **GitHub Issues**: [Report bugs, request features](https://github.com/your-org/campus-hall/issues)
-- **Discussions**: [Ask questions, share ideas](https://github.com/your-org/campus-hall/discussions)
-- **Email**: support@campushall.dev
-- **Security**: security@campushall.dev
+- **GitHub Issues**: [Report bugs, request features](https://github.com/aravinnndddd/cep-hall/issues)
+- **Discussions**: [Ask questions, share ideas](https://github.com/aravinnndddd/cep-hall/discussions)
+- **Email**: aravindlernskills@gmail.com
+- **Security**: aravindlernskills@gmail.com
 
 ## 📊 Project Stats
 
