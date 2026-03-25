@@ -201,8 +201,8 @@ src/
 1. **Clone the repository**
 
 ```bash
-git clone https://github.com/your-org/campus-hall.git
-cd campus-hall
+git clone https://github.com/aravinnndddd/cep-hall.git
+cd cep-hall
 ```
 
 2. **Install dependencies**
@@ -401,7 +401,7 @@ We welcome contributions! CEP Hall is an open-source project and contributions h
 
 Found a bug? Have a suggestion?
 
-1. Check existing [GitHub Issues](https://github.com/aravinnndddd/campus-hall/issues)
+1. Check existing [GitHub Issues](https://github.com/aravinnndddd/cep-hall/issues)
 2. If not found, create a new issue with:
    - Clear title
    - Step-by-step reproduction
