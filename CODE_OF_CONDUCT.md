@@ -46,12 +46,7 @@ This Code of Conduct does **not** cover conduct in private spaces not affiliated
 
 If you witness or experience behavior that violates this Code of Conduct, please report it by:
 
-1. **For minor issues**: Comment politely in the relevant GitHub issue/PR
-2. **For serious concerns**: Email support@campushall.dev with:
-   - Your name (can be anonymous)
-   - Description of the incident
-   - Links/screenshots if applicable
-   - What you'd like to happen
+ **For issues**: Comment politely in the relevant GitHub issue/PR
 
 All reports will be:
 
