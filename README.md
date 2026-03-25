@@ -312,10 +312,24 @@ Create the following collections in Firebase Firestore:
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Only authenticated users can read
-    match /{document=**} {
+
+    function isSuperAdmin() {
+      return request.auth != null &&
+             request.auth.token.email == "admin@college.edu";
+    }
+
+    match /authorizedApprovers/{email} {
       allow read: if request.auth != null;
-      allow write: if false;  // Admin SDK only
+      allow write: if isSuperAdmin();
+    }
+
+    match /resources/{doc} {
+      allow read: if request.auth != null;
+      allow write: if isSuperAdmin();
+    }
+
+    match /bookings/{doc} {
+      allow read, write: if request.auth != null;
     }
   }
 }
@@ -387,7 +401,7 @@ We welcome contributions! Campus Hall is an open-source project and contribution
 
 Found a bug? Have a suggestion?
 
-1. Check existing [GitHub Issues](https://github.com/your-org/campus-hall/issues)
+1. Check existing [GitHub Issues](https://github.com/aravinnndddd/campus-hall/issues)
 2. If not found, create a new issue with:
    - Clear title
    - Step-by-step reproduction
@@ -531,9 +545,9 @@ Campus Hall is developed for educational institutions. Modifications and redistr
 ## Support & Community
 
 - 📧 **Email**: support@campushall.dev
-- 💬 **GitHub Issues**: [Report bugs](https://github.com/your-org/campus-hall/issues)
+- 💬 **GitHub Issues**: [Report bugs](https://github.com/aravinnndddd/campus-hall/issues)
 - 🤝 **Contributing**: See [CONTRIBUTING.md](CONTRIBUTING.md)
-- 📚 **Documentation**: Check the [wiki](https://github.com/your-org/campus-hall/wiki)
+- 📚 **Documentation**: Check the [wiki](https://github.com/aravinnndddd/campus-hall/wiki)
 
 ---
 
