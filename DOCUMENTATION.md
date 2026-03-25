@@ -195,7 +195,7 @@ await generateRequestLetter(booking);
 - **Backend**: Firebase (Auth + Firestore)
 - **Hosting**: Vercel
 - **License**: MIT
-- **Demo**: https://campushall.vercel.app
+- **Demo**: https://cep-lab.vercel.app
 
 ## 🔗 External Resources
 

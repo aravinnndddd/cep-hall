@@ -23,4 +23,4 @@ Disallow: /book/
 Crawl-delay: 1
 
 # Sitemap
-Sitemap: https://campushall.vercel.app/sitemap.xml
+Sitemap: https://cep-lab.vercel.app/sitemap.xml

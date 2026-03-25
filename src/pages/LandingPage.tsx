@@ -201,7 +201,7 @@ const LandingPage: React.FC = () => {
 
             <div className="flex gap-3 mt-3">
               <a
-                href="https://github.com/aravinnndddd"
+                href="https://github.com/aravinnndddd/cep-hall"
                 target="_blank"
                 className="hover:text-white"
               >
