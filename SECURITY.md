@@ -54,16 +54,24 @@ When deploying Campus Hall, follow these security practices:
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Only authenticated users
-    match /{document=**} {
-      allow read: if request.auth != null;
-      allow write: if false;  // Admin SDK only
+
+    function isSuperAdmin() {
+      return request.auth != null &&
+             request.auth.token.email == "admin@college.edu";
     }
 
-    // Specific collection rules
-    match /bookings/{document=**} {
+    match /authorizedApprovers/{email} {
       allow read: if request.auth != null;
-      allow write: if false;
+      allow write: if isSuperAdmin();
+    }
+
+    match /resources/{doc} {
+      allow read: if request.auth != null;
+      allow write: if isSuperAdmin();
+    }
+
+    match /bookings/{doc} {
+      allow read, write: if request.auth != null;
     }
   }
 }
