@@ -8,7 +8,7 @@ A web-based system to streamline and simplify campus resource booking for classe
 ![Status: Active Development](https://img.shields.io/badge/Status-Active-brightgreen)
 ![Deployed: Vercel](https://img.shields.io/badge/Deployed-Vercel-black)
 
-**Live Demo:** https://campushall.vercel.app
+**Live Demo:** https://cep-lab.vercel.app
 
 ---
 
