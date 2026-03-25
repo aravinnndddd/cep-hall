@@ -164,9 +164,9 @@ To audit your CEP Hall installation:
 
 ## Contact
 
-- 📧 Security Issues: security@campushall.dev
+- 📧 Security Issues: aravindlernskills@gmail.com
 - 🐛 General Bugs: GitHub Issues
-- 💬 Questions: support@campushall.dev
+- 💬 Questions: aravindlernskills@gmail.com
 
 ---
 
