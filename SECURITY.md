@@ -8,7 +8,7 @@ Campus Hall takes security seriously. If you discover a security vulnerability, 
 
 **Please DO NOT open public GitHub issues for security vulnerabilities.**
 
-Instead, email your findings to: **security@campushall.dev**
+Instead, email your findings to: **aravindlernskills@gmail.com**
 
 Include in your report:
 
