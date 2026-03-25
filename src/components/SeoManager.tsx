@@ -8,7 +8,7 @@ type SeoConfig = {
 };
 
 const DEFAULT_SEO: SeoConfig = {
-  title: "Campus Hall | College Resource Booking Platform",
+  title: "CEP Hall | College Resource Booking Platform",
   description:
     "Book classrooms, labs, seminar halls, and campus facilities with approval workflows and real-time availability.",
   indexable: true,
@@ -18,7 +18,7 @@ const ROUTE_SEO: Array<{ path: string; seo: SeoConfig }> = [
   {
     path: "/",
     seo: {
-      title: "Campus Hall | Campus Resource Booking",
+      title: "CEP Hall | Campus Resource Booking",
       description:
         "Reserve campus labs, classrooms, and halls in seconds with approval workflows and live calendar visibility.",
       indexable: true,
@@ -27,7 +27,7 @@ const ROUTE_SEO: Array<{ path: string; seo: SeoConfig }> = [
   {
     path: "/calendar",
     seo: {
-      title: "Live Resource Calendar | Campus Hall",
+      title: "Live Resource Calendar | CEP Hall",
       description:
         "View real-time availability of campus resources and upcoming bookings through an interactive calendar.",
       indexable: true,
@@ -36,16 +36,16 @@ const ROUTE_SEO: Array<{ path: string; seo: SeoConfig }> = [
   {
     path: "/login",
     seo: {
-      title: "Login | Campus Hall",
+      title: "Login | CEP Hall",
       description:
-        "Sign in to manage bookings, submit new requests, and track approvals in Campus Hall.",
+        "Sign in to manage bookings, submit new requests, and track approvals in CEP Hall.",
       indexable: false,
     },
   },
   {
     path: "/dashboard",
     seo: {
-      title: "Dashboard | Campus Hall",
+      title: "Dashboard | CEP Hall",
       description:
         "Manage your campus resource bookings, approvals, and requests from your personal dashboard.",
       indexable: false,
@@ -54,7 +54,7 @@ const ROUTE_SEO: Array<{ path: string; seo: SeoConfig }> = [
   {
     path: "/my-bookings",
     seo: {
-      title: "My Bookings | Campus Hall",
+      title: "My Bookings | CEP Hall",
       description:
         "Track your upcoming and past campus resource bookings with status updates and details.",
       indexable: false,
@@ -63,7 +63,7 @@ const ROUTE_SEO: Array<{ path: string; seo: SeoConfig }> = [
   {
     path: "/admin",
     seo: {
-      title: "Admin Panel | Campus Hall",
+      title: "Admin Panel | CEP Hall",
       description:
         "Administrative controls for resources, approvers, and booking workflows.",
       indexable: false,
@@ -72,7 +72,7 @@ const ROUTE_SEO: Array<{ path: string; seo: SeoConfig }> = [
   {
     path: "/admin/approvers",
     seo: {
-      title: "Admin Approvers | Campus Hall",
+      title: "Admin Approvers | CEP Hall",
       description:
         "Manage approvers and authorization flow for booking requests.",
       indexable: false,
@@ -81,7 +81,7 @@ const ROUTE_SEO: Array<{ path: string; seo: SeoConfig }> = [
   {
     path: "/admin/resources",
     seo: {
-      title: "Admin Resources | Campus Hall",
+      title: "Admin Resources | CEP Hall",
       description: "Create and manage campus resources available for booking.",
       indexable: false,
     },
@@ -89,7 +89,7 @@ const ROUTE_SEO: Array<{ path: string; seo: SeoConfig }> = [
   {
     path: "/book/:resourceId",
     seo: {
-      title: "Book Resource | Campus Hall",
+      title: "Book Resource | CEP Hall",
       description:
         "Submit a booking request for campus resources with date and time details.",
       indexable: false,
@@ -98,7 +98,7 @@ const ROUTE_SEO: Array<{ path: string; seo: SeoConfig }> = [
   {
     path: "/edit/:bookingId",
     seo: {
-      title: "Edit Booking | Campus Hall",
+      title: "Edit Booking | CEP Hall",
       description: "Update booking request details and resubmit for approval.",
       indexable: false,
     },

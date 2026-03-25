@@ -1,4 +1,4 @@
-# Campus Hall
+# CEP Hall
 
 > **A modern, transparent, and role-based campus resource booking platform**
 
@@ -29,7 +29,7 @@ A web-based system to streamline and simplify campus resource booking for classe
 
 ## Overview
 
-Campus Hall is a resource management platform designed for educational institutions to digitize booking processes for campus facilities such as laboratories, seminar halls, and classrooms.
+CEP Hall is a resource management platform designed for educational institutions to digitize booking processes for campus facilities such as laboratories, seminar halls, and classrooms.
 
 **Key Benefits:**
 
@@ -365,7 +365,7 @@ const SUPER_ADMIN = "admin@college.edu"; // Change this
 
 ## Contributing
 
-We welcome contributions! Campus Hall is an open-source project and contributions help improve the platform.
+We welcome contributions! CEP Hall is an open-source project and contributions help improve the platform.
 
 ### How to Contribute
 
@@ -538,7 +538,7 @@ A: Currently hardcoded to HOD/Staff → Principal. Modify `src/contexts/AuthCont
 
 This project is licensed under the **MIT License** - see [LICENSE](LICENSE) file for details.
 
-Campus Hall is developed for educational institutions. Modifications and redistribution are allowed under MIT terms.
+CEP Hall is developed for educational institutions. Modifications and redistribution are allowed under MIT terms.
 
 ---
 

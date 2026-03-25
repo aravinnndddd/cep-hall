@@ -63,7 +63,7 @@ const Login: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         className="max-w-md w-full bg-white rounded-2xl shadow-xl shadow-zinc-200/50 border border-zinc-200 p-8 text-center"
       >
-        <h1 className="text-2xl font-bold text-zinc-900 mb-2">Campus Hall</h1>
+        <h1 className="text-2xl font-bold text-zinc-900 mb-2">CEP Hall</h1>
         <p className="text-zinc-500 mb-8">
           Sign in to book labs and seminar halls for your department.
         </p>

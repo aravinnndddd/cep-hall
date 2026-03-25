@@ -2,7 +2,7 @@
 
 ## Our Commitment
 
-We are committed to creating a welcoming, inclusive, and respectful community for all contributors and participants in the Campus Hall project, regardless of their background, identity, or experience level.
+We are committed to creating a welcoming, inclusive, and respectful community for all contributors and participants in the CEP Hall project, regardless of their background, identity, or experience level.
 
 We pledge to make participation in our community a harassment-free experience for everyone, and we are committed to upholding these values.
 
@@ -46,7 +46,7 @@ This Code of Conduct does **not** cover conduct in private spaces not affiliated
 
 If you witness or experience behavior that violates this Code of Conduct, please report it by:
 
- **For issues**: Comment politely in the relevant GitHub issue/PR
+**For issues**: Comment politely in the relevant GitHub issue/PR
 
 All reports will be:
 
@@ -78,4 +78,4 @@ If you have questions about this Code of Conduct, please reach out to the mainta
 
 ---
 
-**Thank you for helping make Campus Hall a welcoming community for everyone.**
+**Thank you for helping make CEP Hall a welcoming community for everyone.**

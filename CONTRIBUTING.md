@@ -1,6 +1,6 @@
-## Contributing to Campus Hall
+## Contributing to CEP Hall
 
-Thank you for your interest in contributing to Campus Hall! We welcome all contributions, whether it's bug fixes, new features, documentation improvements, or other enhancements.
+Thank you for your interest in contributing to CEP Hall! We welcome all contributions, whether it's bug fixes, new features, documentation improvements, or other enhancements.
 
 ### Getting Started
 
@@ -337,6 +337,6 @@ If applicable
 
 ---
 
-**Thank you for contributing to Campus Hall!**
+**Thank you for contributing to CEP Hall!**
 
 We appreciate your effort to improve this project. Your contributions help make campus resource booking better for everyone.

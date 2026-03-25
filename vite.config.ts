@@ -1,6 +1,6 @@
 /**
  * @file vite.config.ts
- * @description Vite configuration for Campus Hall application
+ * @description Vite configuration for CEP Hall application
  * 
  * Configures:
  * - React and Tailwind CSS plugins

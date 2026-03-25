@@ -1,6 +1,6 @@
-# Campus Hall - Documentation Index
+# CEP Hall - Documentation Index
 
-Complete guide to all documentation and resources for the Campus Hall project.
+Complete guide to all documentation and resources for the CEP Hall project.
 
 ## 📚 Main Documentation
 

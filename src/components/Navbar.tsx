@@ -94,7 +94,7 @@ const Navbar: React.FC = () => {
               <Link to="/" className="flex items-center gap-2">
                 <img src="/logo.png" alt="logo" className="flex w-12" />
                 <span className="font-bold text-xl tracking-tight text-zinc-900">
-                  Campus Hall
+                  CEP Hall
                 </span>
               </Link>
               <div className="hidden sm:ml-8 sm:flex sm:space-x-8">

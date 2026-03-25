@@ -2,7 +2,7 @@
 
 ## Reporting Security Vulnerabilities
 
-Campus Hall takes security seriously. If you discover a security vulnerability, please report it responsibly to us instead of disclosing it publicly.
+CEP Hall takes security seriously. If you discover a security vulnerability, please report it responsibly to us instead of disclosing it publicly.
 
 ### How to Report
 
@@ -38,7 +38,7 @@ Include in your report:
 
 ## Security Best Practices for Users
 
-When deploying Campus Hall, follow these security practices:
+When deploying CEP Hall, follow these security practices:
 
 ### Firebase Configuration
 
@@ -104,7 +104,7 @@ service cloud.firestore {
 
 ## Known Limitations
 
-Campus Hall has the following known security characteristics:
+CEP Hall has the following known security characteristics:
 
 - **Client-side API keys** - Firebase API keys are intentionally visible (standard Firebase practice)
 - **Single-page app** - Relies on client-side routing and JavaScript
@@ -139,7 +139,7 @@ Major dependencies:
 
 ## Security Testing
 
-To audit your Campus Hall installation:
+To audit your CEP Hall installation:
 
 1. **Check dependencies**
 
@@ -170,4 +170,4 @@ To audit your Campus Hall installation:
 
 ---
 
-**Thank you for helping us keep Campus Hall secure!**
+**Thank you for helping us keep CEP Hall secure!**
