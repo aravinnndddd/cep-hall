@@ -315,7 +315,7 @@ service cloud.firestore {
 
     function isSuperAdmin() {
       return request.auth != null &&
-             request.auth.token.email == "admin@college.edu";
+             request.auth.token.email == "xxxx@aaaa.bbb";
     }
 
     match /authorizedApprovers/{email} {
