@@ -115,7 +115,7 @@ const Login: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-2 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 outline-none"
-                placeholder="admin@college.edu"
+                placeholder="your.email@college.edu"
               />
             </div>
             <div>
@@ -144,31 +144,6 @@ const Login: React.FC = () => {
             >
               Back to Google Sign-in
             </button>
-            <div className="mt-4 p-3 bg-zinc-50 rounded-lg border border-zinc-100">
-              <p className="text-[10px] text-zinc-400 uppercase font-bold tracking-wider mb-1">
-                Test Credentials
-              </p>
-              <p className="text-xs text-zinc-600">
-                Email: <span className="font-mono">admin@college.edu</span>
-              </p>
-              <p className="text-xs text-zinc-600">
-                Pass: <span className="font-mono">password123</span>
-              </p>
-              <br />
-              <p className="text-xs text-zinc-600">
-                Email: <span className="font-mono">principal@college.edu</span>
-              </p>
-              <p className="text-xs text-zinc-600">
-                Pass: <span className="font-mono">principal</span>
-              </p>
-              <br />
-              <p className="text-xs text-zinc-600">
-                Email: <span className="font-mono">staff.nos@college.edu</span>
-              </p>
-              <p className="text-xs text-zinc-600">
-                Pass: <span className="font-mono">123456789</span>
-              </p>
-            </div>
           </form>
         )}
 
